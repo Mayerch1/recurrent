@@ -10,7 +10,7 @@ try:
 except ImportError:     # pragma nocover
     import parsedatetime
 
-from recurrent.constants import *
+from .constants import *
 
 DEBUG=False
 
