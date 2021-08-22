@@ -1138,6 +1138,12 @@ class RecurringEvent(object):
                         result += add_bysetpos(rr)
                         result += ' on the ' + byday_squasher(list_handler(byday_name, byday)) + ' in ' + list_handler(month_name, bymonth, ' or ')
                     return result + add_suffix(pr)
+                elif bymonth is not None:
+                    if result.endswith(' year'):
+                        result = result[:-5]
+                    result += add_bysetpos(rr)
+                    result += ' ' + list_handler(month_name, bymonth, ' or ')
+                    return result + add_suffix(pr)
                 elif byyearday is not None:
                     result += add_bysetpos(rr)
                     result += ' on the ' + list_handler(number_suffix, byyearday) + ' day'
@@ -1155,6 +1161,9 @@ class RecurringEvent(object):
                     result += add_bysetpos(rr)
                     result += ' in week ' + list_handler(str, byweekno)
                     return result + add_suffix(pr)
+                else:
+                    result += add_bysetpos(rr)
+                    return result + add_suffix(pr)
             elif fr == 'MONTHLY':
                 """ ('every 4th of the month', dict(freq='monthly', interval=1, bymonthday='4')),
                     ('every 4th and 10th of the month', dict(freq='monthly', interval=1, bymonthday='4,10')),
@@ -1170,6 +1179,8 @@ class RecurringEvent(object):
                             add_suffix(pr)
                 elif byday is not None:
                     return add_bysetpos(rr, add='') + byday_squasher(list_handler(byday_name, byday)) + ' of ' +  every_fr_interval_name(fr, interval) + add_suffix(pr)
+                else:
+                    return every_fr_interval_name(fr, interval) + add_suffix(pr)
 
             elif fr == 'WEEKLY':
                 """     ('tuesdays', dict(freq='weekly', interval=1, byday='TU')),
@@ -1188,6 +1199,11 @@ class RecurringEvent(object):
                             list_handler(byday_name, byday).replace('Sat and Sun', 'weekend'). \
                             replace('Mon and Tue and Wed and Thu and Fri', 'weekday') + add_suffix(pr)
                     result = result.replace('every week on ', 'every ')
+                    result = re.sub(r'^every weekend$', 'weekends', result)
+                    result = re.sub(r'^every weekday$', 'weekdays', result)
+                    return result
+                else:
+                    result = every_fr_interval_name(fr, interval) + add_bysetpos(rr) + add_suffix(pr)
                     result = re.sub(r'^every weekend$', 'weekends', result)
                     result = re.sub(r'^every weekday$', 'weekdays', result)
                     return result
